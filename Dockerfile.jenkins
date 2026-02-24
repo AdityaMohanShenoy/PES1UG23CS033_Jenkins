@@ -1,6 +1,20 @@
 FROM jenkins/jenkins:lts
 
 USER root
-RUN apt-get update && apt-get install -y     docker.io     make     g++     curl
+RUN echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/80retries && \
+    echo 'Acquire::http::Timeout "30";' >> /etc/apt/apt.conf.d/80retries && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get update && \
+    apt-get install -y --fix-missing \
+    docker.io \
+    make \
+    g++ \
+    curl || \
+    (apt-get update && apt-get install -y --fix-missing \
+    docker.io \
+    make \
+    g++ \
+    curl)
 
 USER jenkins
